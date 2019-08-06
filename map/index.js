@@ -146,6 +146,7 @@ function dograph() {
         .force("link", 
             d3.forceLink(model.links).id((d) => d.id)
             .iterations(1)
+            .distance(30)
             .strength(0.7)
         )
         .force("charge", 
