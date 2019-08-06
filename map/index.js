@@ -118,10 +118,6 @@ function dograph() {
         width = +canvas.attr("width"),
         height = +canvas.attr("height");
 
-    let simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0.7))
-        .force("charge", d3.forceManyBody())
-        .force("center", d3.forceCenter(width/2, height/2));
 
     let link = canvas.append("g")
         .attr("class", "links")
@@ -135,6 +131,8 @@ function dograph() {
         .data(model.nodes)
         .enter().append("g");
     
+    node.append("circle");
+    
     let labels = node.append("text")
         .text(function(d) { return d.id; })
         .attr('x', 6)
@@ -142,11 +140,24 @@ function dograph() {
     node.append("title")
         .text(function(d) { return d.id; });
 
-    simulation.nodes(model.nodes).on("tick", ticked);
 
-    simulation.force("link").links(model.links);
+
+    let simulation = d3.forceSimulation(model.nodes)
+        .force("link", 
+            d3.forceLink(model.links).id((d) => d.id)
+            .iterations(1)
+            .strength(0.7)
+        )
+        .force("charge", 
+            d3.forceManyBody()
+            .distanceMin(90)
+            .distanceMax(120)
+            .strength(-500)
+            .theta(0.3)
+        )
+        .force("centering", d3.forceCenter(width/2, height/2));
     
-    function ticked() {
+    simulation.on("tick", () => {
         link
             .attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
@@ -157,18 +168,7 @@ function dograph() {
             .attr("transform", function(d) {
                 return "translate(" + d.x + "," + d.y + ")";
             });
-    }
-
-
-    function drawLink(d) {
-        context.moveTo(d.source.x, d.source.y);
-        context.lineTo(d.target.x, d.target.y);
-    }
-
-    function drawNode(d) {
-        context.moveTo(d.x + 3, d.y);
-        context.arc(d.x, d.y, 3, 0, 2 * Math.PI);
-    }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", dograph);
