@@ -1,0 +1,14 @@
+{
+  "name": "map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "d3": "^5.9.7"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3"
+  },
+  "author": "",
+  "license": "ISC"
+}
