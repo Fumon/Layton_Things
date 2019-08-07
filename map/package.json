@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "d3": "^5.9.7"
+    "d3": "^5.9.7",
+    "nouislider": "^14.0.2"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.3"

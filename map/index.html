@@ -8,7 +8,7 @@
 
       .links line {
         stroke: #999;
-        stroke-width:4px;
+        stroke-width:3px;
         stroke-opacity: 0.6;
       }
 
@@ -16,12 +16,34 @@
         fill: #999;
         stroke: #ffffff;
       }
+
+      .noUi-target {
+          padding: 0 17px;
+          margin:1% 3%;
+      }
+      .noUi-connects {
+          margin: 0 -17px;
+          width: calc(100% + 34px);
+      }
+
+      #container {
+        width:60%;
+        float:right;
+      }
+      #sliders {
+        width:40%;
+      }
+
+
     </style>
   </head>
   <body>
     <h1>Stupidly complicated Professor Layton Puzzle Explorer</h1>
 
     <svg width="700" height="700" id="container"></svg>
+    
+    <div id="sliders"></div>
+
     <script src="./index.js"></script>
   </body>
 </html>

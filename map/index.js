@@ -1,5 +1,9 @@
 import * as d3 from "d3";
 
+import noUiSlider from "nouislider"
+import 'nouislider/distribute/nouislider.css';
+import { S_IFDIR } from "constants";
+
 let model = {
     "nodes": [
         {"id":"G"}, // 0
@@ -131,7 +135,14 @@ function dograph() {
         .data(model.nodes)
         .enter().append("g");
     
-    node.append("circle");
+    node.append("circle")
+        .attr("r", (d) => {
+            if(isNaN(d.id)) {
+                return 7;
+            } else {
+                return 4;
+            }
+        });
     
     let labels = node.append("text")
         .text(function(d) { return d.id; })
@@ -140,24 +151,92 @@ function dograph() {
     node.append("title")
         .text(function(d) { return d.id; });
 
-
-
-    let simulation = d3.forceSimulation(model.nodes)
-        .force("link", 
-            d3.forceLink(model.links).id((d) => d.id)
-            .iterations(1)
-            .distance(30)
-            .strength(0.7)
-        )
-        .force("charge", 
-            d3.forceManyBody()
-            .distanceMin(90)
-            .distanceMax(120)
-            .strength(-500)
-            .theta(0.3)
-        )
-        .force("centering", d3.forceCenter(width/2, height/2));
+    function h(set, min, max, step){ 
+        if(step === undefined) {
+            step = 0.1;
+        }
+        return {s:set, min:min, max:max, step:step};
+    };
     
+    let sset = {
+        "link": {
+            "iterations": h(1, 1, 30, 1),
+            "distance": h(30, 0, 800, 5),
+            "strength": h(0.7, -5, 5)
+        },
+        "charge": {
+            "distanceMin": h(90, 1, 500, 5),
+            "distanceMax": h(120, 2, 1000, 5),
+            "strength": h(-30, -5000, 5000, 10),
+            "theta": h(0.3, 0, 1, 0.05)
+        }
+    }
+
+    let linkForce = d3.forceLink(model.links).id((d) => d.id)
+        .iterations(sset.link.iterations.s)
+        .distance(sset.link.distance.s)
+        .strength(sset.link.strength.s);
+
+    let chargeForce = d3.forceManyBody()
+        .distanceMin(sset.charge.distanceMin.s)
+        .distanceMax(sset.charge.distanceMax.s)
+        .strength(sset.charge.strength.s)
+        .theta(sset.charge.theta.s);
+    
+    let simulation = d3.forceSimulation(model.nodes)
+        .force("link", linkForce)
+        .force("charge", chargeForce)
+        .force("centering", d3.forceCenter(width/2, height/2))
+        .alphaDecay(0);
+    
+
+    // Generate sliders
+    // text helper
+    function header(n, t) {
+        var g = document.createElement("h" + n);
+        g.appendChild(document.createTextNode(t));
+        return g;
+    };
+
+    // Bind to 
+
+    const sliderDiv = document.getElementById("sliders");
+    sliderDiv.appendChild(header(2, "Settings"));
+    for (var type in sset) {
+        sliderDiv.appendChild(header(3, type));
+        var settingDiv = document.createElement("div");
+        sliderDiv.appendChild(settingDiv);
+        for (var setting in sset[type]) {
+            var vals = sset[type][setting];
+            var range = document.createElement("div");
+            settingDiv.appendChild(range);
+            var sld = noUiSlider.create(range, {
+                range: {
+                    "min": vals.min,
+                    "max": vals.max
+                },
+
+                step: vals.step,
+                start: vals.s,
+
+                tooltips: true,
+            });
+
+            var cal = function() {
+                return (vals) => {
+                    console.log(+vals[0])
+                    simulation.force(type).call(setting, +vals[0]);
+                    simulation.alpha(1);
+                }
+            }();
+            sld.on("set", cal);
+
+            var span = document.createElement("span");
+            span.appendChild(document.createTextNode(setting));
+            settingDiv.appendChild(span);
+        }
+    }
+
     simulation.on("tick", () => {
         link
             .attr("x1", function(d) { return d.source.x; })
