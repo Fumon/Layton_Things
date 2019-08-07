@@ -1,0 +1,15 @@
+{
+  "name": "layton_3_pz_no.40",
+  "version": "1.0.0",
+  "description": "Interactive Puzzle Exploration",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/parcel-bundler/bin/cli.js"
+  },
+  "author": "Jade Bilkey",
+  "license": "ISC",
+  "dependencies": {
+    "nouislider": "^14.0.2",
+    "parcel": "^1.12.3"
+  }
+}
