@@ -4,12 +4,12 @@
   "description": "Interactive Puzzle Exploration",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/parcel-bundler/bin/cli.js"
+    "start": "./node_modules/parcel-bundler/bin/cli.js ./index.html"
   },
   "author": "Jade Bilkey",
   "license": "ISC",
   "dependencies": {
     "nouislider": "^14.0.2",
-    "parcel": "^1.12.3"
+    "parcel-bundler": "^1.12.3"
   }
 }

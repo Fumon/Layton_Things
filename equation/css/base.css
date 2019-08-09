@@ -3,7 +3,7 @@ body {
 }
 
 .widget {
-    
+    width: 200px;
 }
 
 .flex-col {
@@ -13,4 +13,8 @@ body {
 
 .flex-row {
     display: flex;
+}
+
+.varlist {
+    justify-content: space-around;
 }
